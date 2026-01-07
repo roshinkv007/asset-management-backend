@@ -4,6 +4,8 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import assetRoutes from "./routes/assetRoutes.js";
+
 
 dotenv.config();
 connectDB();
@@ -17,6 +19,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/assets", assetRoutes);
 
 
 // Test route
