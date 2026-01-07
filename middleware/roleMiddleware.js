@@ -1,0 +1,8 @@
+export const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    console.log("next is:", next);
+    return next(); // ✅ SAFE
+
+  }
+  return res.status(403).json({ message: "Admin access only" });
+};
