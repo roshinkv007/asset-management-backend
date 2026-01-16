@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    phone: {type: Number,required: true, unique: true},
     password: { type: String, required: true },
+    joiningDate: {type: Date},
     role: {
       type: String,
       enum: ["admin", "employee"],
@@ -13,6 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     department: String,
     isDeleted: { type: Boolean, default: false },
+    salary:{type: Number}
   },
   { timestamps: true }
 );

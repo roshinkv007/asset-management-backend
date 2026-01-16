@@ -1,5 +1,31 @@
 import User from "../models/userModel.js";
 import Asset from "../models/assetModel.js";
+import AssetHistory from "../models/assetHistoryModel.js";
+
+export const updateUserRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      { new: true }
+    );
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const toggleUserStatus = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  user.isActive = !user.isActive;
+  await user.save();
+  res.json(user);
+};
+
+
 
 // @desc    Get all users with assigned assets
 // @route   GET /api/users
@@ -48,7 +74,7 @@ export const getUserById = async (req, res) => {
 // @route   POST /api/users
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role, department } = req.body;
+    const { name, email, password, role, department,salary,joiningDate,phone } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -61,6 +87,9 @@ export const createUser = async (req, res) => {
       password,
       role,
       department,
+      salary,
+      joiningDate,
+      phone
     });
 
     res.status(201).json({
@@ -86,6 +115,9 @@ export const updateUser = async (req, res) => {
     user.email = req.body.email || user.email;
     user.role = req.body.role || user.role;
     user.department = req.body.department || user.department;
+    user.salary = req.body.salary || user.salary;
+    user.phone = req.body.phone || user.phone;
+    user.joiningDate = req.body.joiningDate || user.joiningDate;
 
     await user.save();
     res.json({ message: "User updated successfully" });
@@ -158,4 +190,40 @@ export const searchUsers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getEmployeeAssetHistory = async (req, res) => {
+  const employeeId = req.params.id;
+
+  const histories = await AssetHistory.find({
+    assignedTo: employeeId,
+    action: { $in: ["assigned", "unassigned"] },
+  })
+    .populate("asset", "name serialNumber")
+    .sort({ createdAt: 1 });
+
+  const timeline = [];
+  let current = null;
+
+  for (const h of histories) {
+    if (h.action === "assigned") {
+      current = {
+        assetId: h.asset._id,
+        assetName: h.asset.name,
+        serial: h.asset.serialNumber,
+        from: h.createdAt,
+        to: null,
+      };
+    }
+
+    if (h.action === "unassigned" && current) {
+      current.to = h.createdAt;
+      timeline.push(current);
+      current = null;
+    }
+  }
+
+  if (current) timeline.push(current);
+
+  res.json({ employeeId, assets: timeline });
 };

@@ -11,8 +11,10 @@ import {
 } from "../controllers/assetController.js";
 import protect from "../middleware/authMiddleware.js";
 import { isAdmin } from "../middleware/roleMiddleware.js";
+import { adminOnly } from "../middleware/adminOnly.js";
 import { getAssetHistory } from "../controllers/assetHistoryController.js";
 import { exportAssetHistoryPDF } from "../controllers/assetExportController.js";
+
 
 const router = express.Router();
 
@@ -36,6 +38,9 @@ router.put(
 // HISTORY
 router.get("/:id/history", protect, isAdmin, getAssetHistory);
 router.get("/:id/history/pdf", protect, isAdmin, exportAssetHistoryPDF);
+// routes/assetRoutes.js
+router.get("/:id/history", protect, adminOnly, getAssetHistory);
+
 
 // GENERIC (ALWAYS LAST)
 router.put("/:id", protect, isAdmin, updateAsset);

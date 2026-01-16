@@ -1,6 +1,16 @@
 import Asset from "../models/assetModel.js";
 import AssetHistory from "../models/assetHistoryModel.js";
 
+
+export const getAssetHistory = async (req, res) => {
+  const history = await AssetHistory
+    .find({ asset: req.params.id })
+    .populate("changedBy", "name email")
+    .sort({ createdAt: -1 });
+
+  res.json(history);
+};
+
 // GET /api/assets
 export const getAssets = async (req, res) => {
   try {
