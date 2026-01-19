@@ -7,7 +7,8 @@ import userRoutes from "./routes/userRoutes.js";
 import assetRoutes from "./routes/assetRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js"
 import dashboardRoutes from "./routes/dashboardRoutes.js"
-
+import assetCategoryRoutes from "./routes/assetCategoryRoutes.js"
+import departmentRoutes from "./routes/departmentRoutes.js"
 
 dotenv.config();
 connectDB();
@@ -24,7 +25,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use("/api/asset-categories", assetCategoryRoutes);
+app.use("/api/departments", departmentRoutes);
 
 // Test route
 app.get("/", (req, res) => {
@@ -36,8 +38,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
-
-

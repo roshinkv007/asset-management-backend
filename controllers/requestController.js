@@ -1,5 +1,6 @@
 import Request from "../models/requestModel.js";
 import Asset from "../models/assetModel.js";
+import AssetHistory from "../models/assetHistoryModel.js";
 
 // @desc Employee creates request
 // @route POST /api/requests
@@ -74,6 +75,14 @@ export const updateRequestStatus = async (req, res) => {
       asset.status = "assigned";
       asset.assignedTo = request.user;
       await asset.save();
+      await AssetHistory.create({
+        asset: asset._id,
+        action: "assigned",
+        performedBy: req.user._id, // admin
+        assignedTo: request.user, // employee
+        notes: null,
+      });
+      // await asset.save();
 
       request.assignedAsset = asset._id;
     }

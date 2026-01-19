@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       default: "employee",
     },
     department: String,
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false, required: true },
     salary:{type: Number}
   },
   { timestamps: true }
